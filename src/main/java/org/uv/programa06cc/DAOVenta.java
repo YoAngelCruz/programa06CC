@@ -77,7 +77,19 @@ public class DAOVenta implements IDAOGeneral<Venta, Long> {
 
     @Override
     public List<Venta> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    List<Venta> ventas = null;
+        Session session = HibernateUtil.getSession();
+        Transaction t = session.beginTransaction();
+        ventas = session.createQuery("from Venta").list();
+        for (Venta venta : ventas) {
+            List<DetalleVenta> detalle = null;
+            detalle = session.createQuery("from DetalleVenta where id=" + venta.getIdVenta()).list();
+            for (DetalleVenta detalleVenta : detalle) {
+                venta.getDetalle().add(detalleVenta);
+            }
+        }
+        t.commit();
+        return ventas;
     }
 
     @Override
